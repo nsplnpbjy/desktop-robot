@@ -1,0 +1,33 @@
+{
+  "name": "desktop-robot",
+  "productName": "Desktop Robot",
+  "version": "0.1.0",
+  "description": "A configurable GIF desktop companion with text chat, multi-provider LLM support and reserved voice hooks.",
+  "author": "Desktop Robot contributors",
+  "main": "src/main/index.js",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/start.js",
+    "test": "node --test \"tests/*.test.js\"",
+    "check": "node scripts/check-project.js",
+    "mock": "node scripts/mock-openclaw.js",
+    "shortcut": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/create-shortcut.ps1",
+    "generate:animations": "python scripts/generate_animations.py"
+  },
+  "keywords": [
+    "electron",
+    "desktop-pet",
+    "gif",
+    "llm"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "electron": "44.10.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

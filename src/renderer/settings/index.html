@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Desktop Robot · 配置</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="../../../assets/icons/avatar.png" alt="" draggable="false">
+        </div>
+        <div class="brand-copy">
+          <div class="eyebrow">DESKTOP ROBOT · CONTROL ROOM</div>
+          <h1>小机的控制台</h1>
+          <p>所有行为都由一份 YAML 配置文件驱动。</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill is-pending" id="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="status-text">正在读取配置…</span>
+        </div>
+        <span class="version" id="version-label">v0.1.0</span>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar" id="sidebar">
+        <section class="side-card model-card">
+          <div class="card-heading">
+            <span class="card-kicker">MODEL</span>
+            <span class="mini-badge" id="provider-count">0 个供应商</span>
+          </div>
+          <h2 id="model-name">未配置</h2>
+          <div class="meta-row">
+            <span class="meta-label">类型</span>
+            <span class="meta-value" id="model-type">—</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">模型</span>
+            <span class="meta-value mono" id="model-id">—</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">地址</span>
+            <span class="meta-value mono ellipsis" id="model-endpoint" title="">—</span>
+          </div>
+          <div class="key-status" id="key-status">
+            <span class="key-dot" aria-hidden="true"></span>
+            <span id="key-status-text">正在检查 API Key</span>
+          </div>
+        </section>
+
+        <section class="side-card">
+          <div class="card-heading">
+            <span class="card-kicker">NETWORK</span>
+            <span class="mini-badge" id="proxy-mode">DIRECT</span>
+          </div>
+          <h2>网络代理</h2>
+          <div class="meta-row">
+            <span class="meta-label">地址</span>
+            <span class="meta-value mono ellipsis" id="proxy-url" title="">—</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">认证</span>
+            <span class="meta-value" id="proxy-auth">—</span>
+          </div>
+          <p class="card-note">代理只作用于模型请求。访问本地 OpenClaw / Ollama 时建议保留 bypass。</p>
+        </section>
+
+        <section class="side-card voice-card">
+          <div class="card-heading">
+            <span class="card-kicker">VOICE</span>
+            <span class="mini-badge is-amber">RESERVED</span>
+          </div>
+          <h2>语音能力</h2>
+          <div class="voice-row">
+            <span class="voice-kind">语音输入</span>
+            <span class="voice-state" id="voice-input">接口预留</span>
+          </div>
+          <div class="voice-row">
+            <span class="voice-kind">语音输出</span>
+            <span class="voice-state" id="voice-output">接口预留</span>
+          </div>
+          <p class="card-note">v0.1 不会请求麦克风权限，也不会播放或上传音频。</p>
+        </section>
+
+        <section class="side-card animations-card">
+          <div class="card-heading">
+            <span class="card-kicker">APPEARANCE</span>
+            <span class="mini-badge" id="animations-count">0 / 6</span>
+          </div>
+          <h2>动画套组</h2>
+          <div class="animation-list" id="animation-list"></div>
+          <button class="mini-action" id="open-animations" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7.5Z"/><path d="M3 7.5V5a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v2.5"/></svg>
+            打开动画文件夹
+          </button>
+        </section>
+
+        <section class="side-card file-card">
+          <div class="card-heading">
+            <span class="card-kicker">FILES</span>
+            <span class="mini-badge">YAML</span>
+          </div>
+          <h2>配置文件</h2>
+          <p class="path-label">当前路径</p>
+          <p class="config-path mono" id="config-path" title="">—</p>
+          <div class="file-actions">
+            <button class="mini-action" id="open-config-file" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6"/></svg>
+              用系统编辑器打开
+            </button>
+            <button class="mini-action" id="open-config-folder" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7.5Z"/><path d="M3 7.5V5a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v2.5"/></svg>
+              打开所在文件夹
+            </button>
+            <button class="mini-action" id="open-log" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
+              查看日志
+            </button>
+          </div>
+        </section>
+
+        <div class="sidebar-footnote">
+          <span class="footnote-dot" aria-hidden="true"></span>
+          修改会立即应用，但建议保留当前文件备份。
+        </div>
+      </aside>
+
+      <section class="editor-panel">
+        <div class="editor-head">
+          <div class="editor-title-group">
+            <div class="editor-title-line">
+              <h2>config.yaml</h2>
+              <span class="unsaved-label" id="unsaved-label" hidden>未保存</span>
+            </div>
+            <p>编辑 YAML 后按 Ctrl+S 或点击“保存并应用”。</p>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-ghost" id="reload" type="button" title="从磁盘重新读取并应用">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+              重新加载
+            </button>
+            <button class="btn btn-ghost" id="test" type="button" title="使用当前已生效配置测试连接">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8"/><path d="M12 8v8"/><circle cx="12" cy="12" r="9"/></svg>
+              测试连接
+            </button>
+            <button class="btn btn-primary" id="save" type="button" disabled>
+              <span class="btn-spinner" id="save-spinner" aria-hidden="true"></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+              保存并应用
+            </button>
+          </div>
+        </div>
+
+        <div class="message-area" id="message-area" hidden>
+          <div class="message-icon" id="message-icon" aria-hidden="true">!</div>
+          <div class="message-copy" id="message-copy"></div>
+          <button class="message-close" id="message-close" type="button" aria-label="关闭提示">×</button>
+        </div>
+
+        <div class="editor-wrap">
+          <div class="line-numbers" id="line-numbers" aria-hidden="true">1</div>
+          <textarea
+            id="editor"
+            class="editor"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            wrap="off"
+            aria-label="配置文件编辑器"
+            placeholder="正在读取 config.yaml…"
+          ></textarea>
+        </div>
+
+        <div class="editor-statusbar">
+          <span id="cursor-position">第 1 行，第 1 列</span>
+          <span class="status-separator" aria-hidden="true">·</span>
+          <span id="file-status">UTF-8 · YAML</span>
+          <span class="status-spacer"></span>
+          <span class="save-shortcut">Ctrl+S 保存</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

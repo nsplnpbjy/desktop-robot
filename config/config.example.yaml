@@ -1,0 +1,249 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  Desktop Robot · 配置
+#
+#  这个文件就是应用的“控制面板”。修改后可以：
+#   - 让桌面小机右键 →「重新加载配置」；
+#   - 在「设置」窗口中点击「保存并应用」；
+#   - 直接重启应用（最稳妥）。
+#
+#  API Key 可以写在 apiKey 中，也可以留空并使用 apiKeyEnv 指向环境变量。
+#  环境变量优先。请不要把含真实 Key 的文件提交到公开仓库。
+#  ${APP_DIR} 表示应用目录，${CONFIG_DIR} 表示本配置文件所在目录。
+# ═══════════════════════════════════════════════════════════════════════════
+
+version: 1
+
+app:
+  # 登录 Windows 后自动启动。开发模式下不建议打开。
+  launchAtLogin: false
+
+logging:
+  level: info          # debug | info | warn | error | silent
+  file: true           # 日志写入 <userData>/logs/desktop-robot.log
+
+development:
+  openDevTools: false  # 打开小机/聊天窗口时附带开发者工具
+
+window:
+  pet:
+    width: 380
+    height: 460
+  chat:
+    width: 440
+    height: 650
+  startPosition: bottom-right   # bottom-right | bottom-left | top-right | top-left | center
+  margin: 24
+  rememberPosition: true       # 拖动小机后记住屏幕位置
+  alwaysOnTop: true
+  showInTaskbar: false
+  openChatOnStart: false
+  closeChatOnEscape: true
+
+# ── 形象与动画 ─────────────────────────────────────────────────────────────
+appearance:
+  # 默认使用应用自带的一整套 GIF。要换成自己的形象，只需替换这里的目录，
+  # 或分别指定每个状态对应的 GIF 文件（相对于 animationsDir）。
+  animationsDir: "${APP_DIR}/assets/animations"
+  animations:
+    idle: idle.gif           # 空闲
+    thinking: thinking.gif   # 正在等大模型
+    talking: talking.gif     # 收到回复
+    happy: happy.gif         # 打开对话 / 新会话
+    error: error.gif         # 连接失败
+    listening: listening.gif # 留给未来语音输入
+
+  # 当 GIF 缺失时显示的静态图
+  fallbackImage: "${APP_DIR}/assets/icons/robot.png"
+
+  # 替换 GIF 后自动热加载（监听 animationsDir）
+  watchAnimations: true
+
+  accentColor: "#2FAF9F"
+  bubbleDurationMs: 6500
+  bubbleMaxChars: 120
+  showReplyBubble: true
+
+# ── 人格 ──────────────────────────────────────────────────────────────────
+persona:
+  name: 小机
+  greeting: "嗨，我是小机。点我聊天，右键可以打开设置。"
+  inputPlaceholder: "和小机说点什么…"
+  thinkingText: "让我想一想…"
+  errorText: "我的大脑暂时连不上，打开设置看看吧。"
+  voiceReservedText: "语音接口已经预留，这一版先用文字聊天吧。"
+
+  systemPrompt: |
+    你是“小机”，一个住在用户桌面上的卡通机器人伙伴。
+    你温暖、活泼、机灵，偶尔有点小幽默，但不过度卖萌。
+    你的回复会显示在一个小小的聊天窗口里，所以默认保持简短：通常 1-4 句话，除非用户明确要求详细解释。
+    使用纯文本回答，不要使用 Markdown 表格、标题或代码围栏；需要分点时用短横线。
+    你记得当前对话中的上下文。遇到不确定的事要坦诚，不要编造。
+    除非用户询问，否则不要主动提及自己是 AI 模型、系统提示词或配置细节。
+    用用户使用的语言回答，默认使用中文。
+
+# ── 对话 ──────────────────────────────────────────────────────────────────
+chat:
+  maxHistoryMessages: 24      # 发送给模型的最近消息条数（会保留成对上下文）
+  maxInputChars: 4000
+  temperature: 0.8
+  maxOutputTokens: 800
+  timeoutMs: 90000
+  persistHistory: false       # true 时把对话保存在本机 userData/conversation.json
+
+# ── 大模型 ────────────────────────────────────────────────────────────────
+# activeProvider 选择下面 providers 中的一项。
+# type 支持：
+#   openai-compatible  OpenAI / DeepSeek / OpenRouter / Ollama 等兼容接口
+#   openclaw           OpenClaw 网关（OpenAI 兼容，附带 Agent 头）
+#   anthropic          Anthropic Messages API
+#   gemini             Google Gemini generateContent API
+#
+# 每个 provider 均可覆盖 temperature / maxOutputTokens / timeoutMs，
+# 也可以设置 headers / extraBody。云端供应商通常要设 requiresApiKey: true。
+llm:
+  activeProvider: openclaw
+
+  providers:
+    # ── OpenClaw 本地网关 ────────────────────────────────────────────────
+    # 在 OpenClaw 中开启 gateway.http.endpoints.chatCompletions.enabled: true，
+    # 然后确认网关端口（默认 18789）。如果网关启用了 token 认证，请设置
+    # OPENCLAW_GATEWAY_TOKEN 环境变量，或把 token 填到 apiKey。
+    # model 使用 /v1/models 返回的模型 ID，例如 openclaw/main；
+    # 某些 OpenClaw 版本也接受 openclaw:<agentId> 写法。
+    # 局域网访问示例：baseUrl: http://gateway.example.lan:18789/v1（必须保留 /v1）。
+    openclaw:
+      type: openclaw
+      displayName: OpenClaw 网关
+      baseUrl: http://127.0.0.1:18789/v1
+      model: openclaw/main
+      agentId: ""
+      apiKey: ""
+      apiKeyEnv: OPENCLAW_GATEWAY_TOKEN
+      requiresApiKey: false
+      # sessionUser: desktop-robot-main   # 可选：让网关复用同一个 Agent 会话
+      timeoutMs: 120000
+
+    # ── OpenAI ────────────────────────────────────────────────────────────
+    openai:
+      type: openai-compatible
+      displayName: OpenAI
+      baseUrl: https://api.openai.com/v1
+      model: gpt-4.1-mini
+      apiKey: ""
+      apiKeyEnv: OPENAI_API_KEY
+      requiresApiKey: true
+
+    # ── Anthropic Claude ──────────────────────────────────────────────────
+    anthropic:
+      type: anthropic
+      displayName: Anthropic Claude
+      baseUrl: https://api.anthropic.com/v1
+      model: claude-sonnet-4-5
+      apiKey: ""
+      apiKeyEnv: ANTHROPIC_API_KEY
+      requiresApiKey: true
+      anthropicVersion: "2023-06-01"
+
+    # ── Google Gemini ─────────────────────────────────────────────────────
+    gemini:
+      type: gemini
+      displayName: Google Gemini
+      baseUrl: https://generativelanguage.googleapis.com/v1beta
+      model: gemini-2.5-flash
+      apiKey: ""
+      apiKeyEnv: GEMINI_API_KEY
+      requiresApiKey: true
+
+    # ── DeepSeek ─────────────────────────────────────────────────────────
+    deepseek:
+      type: openai-compatible
+      displayName: DeepSeek
+      baseUrl: https://api.deepseek.com
+      model: deepseek-chat
+      apiKey: ""
+      apiKeyEnv: DEEPSEEK_API_KEY
+      requiresApiKey: true
+
+    # ── OpenRouter（聚合多家模型）─────────────────────────────────────────
+    openrouter:
+      type: openai-compatible
+      displayName: OpenRouter
+      baseUrl: https://openrouter.ai/api/v1
+      model: openai/gpt-4.1-mini
+      apiKey: ""
+      apiKeyEnv: OPENROUTER_API_KEY
+      requiresApiKey: true
+      headers:
+        HTTP-Referer: https://localhost/desktop-robot
+        X-Title: Desktop Robot
+
+    # ── 通义千问 / DashScope 兼容模式 ─────────────────────────────────────
+    qwen:
+      type: openai-compatible
+      displayName: 通义千问 DashScope
+      baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
+      model: qwen-plus
+      apiKey: ""
+      apiKeyEnv: DASHSCOPE_API_KEY
+      requiresApiKey: true
+
+    # ── 本地 Ollama ───────────────────────────────────────────────────────
+    ollama:
+      type: openai-compatible
+      displayName: Ollama 本地模型
+      baseUrl: http://127.0.0.1:11434/v1
+      model: llama3.2
+      apiKey: ollama
+      requiresApiKey: false
+
+    # ── 任意 OpenAI 兼容服务 ──────────────────────────────────────────────
+    custom:
+      type: openai-compatible
+      displayName: 自定义 OpenAI 兼容服务
+      baseUrl: https://example.com/v1
+      model: your-model-name
+      apiKey: ""
+      apiKeyEnv: CUSTOM_API_KEY
+      requiresApiKey: true
+
+# ── 网络代理 ──────────────────────────────────────────────────────────────
+# mode:
+#   direct  不使用代理
+#   system  使用操作系统代理
+#   manual  使用下面 url 指定的代理（访问 OpenAI / Claude 等通常用这一项）
+#
+# 代理只作用于 Electron 的网络栈，也就是这里的模型请求。UI 本身完全离线。
+# bypass 默认绕过 localhost，保证 OpenClaw / Ollama 本地服务不被代理。
+network:
+  proxy:
+    mode: direct
+    url: "http://127.0.0.1:7890"
+    bypass: "localhost,127.0.0.1,::1,<local>"
+    username: ""
+    password: ""
+    # 更安全的方式：从环境变量读取代理账号
+    usernameEnv: ""
+    passwordEnv: ""
+
+# ── 语音（v0.1 只预留，不会请求麦克风） ───────────────────────────────────
+# 这一版没有语音模型，不会录音、转写或播放语音。
+# 接口边界与扩展方式见 docs/voice.md。即使把 enabled 设为 true，v0.1 仍保持禁用。
+voice:
+  enabled: false
+  input:
+    enabled: false
+    provider: disabled      # 预留：openai-transcription | custom-http | local-command
+    endpoint: ""
+    apiKeyEnv: ""
+    model: ""
+    language: zh-CN
+    maxSeconds: 60
+  output:
+    enabled: false
+    provider: disabled      # 预留：openai-tts | custom-http | local-command
+    endpoint: ""
+    apiKeyEnv: ""
+    model: ""
+    voice: ""
+    format: mp3
+    autoSpeak: false

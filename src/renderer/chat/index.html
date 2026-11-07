@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>与小机聊天</title>
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+  <div class="chat-shell">
+    <div class="chat-card">
+      <header class="titlebar" id="titlebar">
+        <div class="identity">
+          <div class="avatar">
+            <img id="header-avatar" src="../../../assets/icons/avatar.png" alt="" draggable="false">
+            <span class="presence" id="presence"></span>
+          </div>
+          <div class="identity-copy">
+            <div class="name-line">
+              <h1 id="bot-name">小机</h1>
+              <span class="status-label">桌面伙伴</span>
+            </div>
+            <div class="provider-line" id="provider-line" title="当前模型">
+              <span class="provider-dot" id="provider-dot"></span>
+              <span id="provider-label">正在读取配置…</span>
+            </div>
+          </div>
+        </div>
+        <div class="window-actions">
+          <button class="icon-button" id="voice-output" type="button" aria-label="语音输出（预留，未启用）" title="语音输出 · v0.1 预留">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6.8 8.5H4.5A1.5 1.5 0 0 0 3 10v4a1.5 1.5 0 0 0 1.5 1.5h2.3L11 19V5Z"/><path d="M15 8.5a5 5 0 0 1 0 7"/><path d="M17.8 5.8a9 9 0 0 1 0 12.4"/><path class="slash" d="m4 4 16 16"/></svg>
+            <span class="reserved-badge" aria-hidden="true">预留</span>
+          </button>
+          <button class="icon-button" id="new-chat" type="button" aria-label="开始新对话" title="新对话">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+          </button>
+          <button class="icon-button" id="settings" type="button" aria-label="打开设置" title="设置">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h2"/><path d="M10 17h10"/><circle cx="8" cy="17" r="2"/></svg>
+          </button>
+          <button class="icon-button close-button" id="close-chat" type="button" aria-label="关闭对话窗口" title="关闭">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="config-banner" id="config-banner" hidden>
+        <div class="banner-icon" aria-hidden="true">!</div>
+        <div class="banner-copy">
+          <strong>配置需要修复</strong>
+          <p id="config-banner-text"></p>
+        </div>
+        <button class="banner-action" id="banner-settings" type="button">打开设置</button>
+      </div>
+
+      <main class="conversation" id="conversation">
+        <div class="welcome" id="welcome">
+          <div class="welcome-orbit" aria-hidden="true">
+            <div class="welcome-avatar">
+              <img id="welcome-avatar" src="../../../assets/icons/avatar.png" alt="" draggable="false">
+            </div>
+            <span class="orbit-dot dot-one"></span>
+            <span class="orbit-dot dot-two"></span>
+            <span class="orbit-dot dot-three"></span>
+          </div>
+          <h2 id="welcome-title">你好，我是小机</h2>
+          <p id="welcome-text">点我聊天，右键可以打开设置。</p>
+          <div class="welcome-hint">
+            <span class="tiny-pulse" aria-hidden="true"></span>
+            <span>桌面常驻 · 文字对话已就绪</span>
+          </div>
+        </div>
+        <div class="thread" id="thread" role="log" aria-live="polite" aria-relevant="additions"></div>
+      </main>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <footer class="composer-area">
+        <form class="composer" id="composer">
+          <button class="composer-icon mic-button" id="mic" type="button" aria-label="语音输入（预留，未启用）" title="语音输入 · v0.1 预留">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/><path d="M8.5 21h7"/></svg>
+            <span class="mic-dot" aria-hidden="true"></span>
+          </button>
+          <textarea
+            id="input"
+            rows="1"
+            maxlength="4000"
+            placeholder="和小机说点什么…"
+            aria-label="输入消息"
+            autocomplete="off"
+          ></textarea>
+          <button class="send-button" id="send" type="submit" aria-label="发送消息" title="发送 (Enter)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12 20 5l-5.2 14-3.1-6.1L5 12Z"/><path d="m11.7 12.9 3.4-3.4"/></svg>
+          </button>
+        </form>
+        <div class="composer-meta">
+          <span class="voice-status"><span class="voice-dot" aria-hidden="true"></span>语音接口预留 · 当前仅文字</span>
+          <span class="keyboard-hint">Enter 发送 · Shift+Enter 换行</span>
+        </div>
+        <div class="character-count" id="char-count" aria-live="polite"></div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="chat.js"></script>
+</body>
+</html>

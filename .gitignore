@@ -1,0 +1,14 @@
+node_modules/
+.npm-cache/
+.electron-cache/
+.runtime/
+runtime/
+screenshots/
+logs/
+*.log
+config/config.yaml
+config/config.yaml.bak
+config/config.yaml.*.tmp
+*.lnk
+.DS_Store
+Thumbs.db

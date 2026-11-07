@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Desktop Robot</title>
+  <link rel="stylesheet" href="pet.css">
+</head>
+<body>
+  <main class="pet-app" id="pet-app">
+    <div class="pet-aura" aria-hidden="true"></div>
+
+    <section class="bubble" id="bubble" role="status" aria-live="polite" aria-atomic="true">
+      <div class="bubble-accent" aria-hidden="true"></div>
+      <div class="bubble-text" id="bubble-text"></div>
+      <button class="bubble-close" id="bubble-close" type="button" aria-label="收起消息">×</button>
+    </section>
+
+    <div class="pet-stage">
+      <div class="pet-hit" id="pet-hit" role="button" tabindex="0" aria-label="和小机聊天">
+        <img class="pet-image" id="pet-image" alt="小机" draggable="false">
+        <div class="pet-placeholder" id="pet-placeholder" aria-hidden="true">
+          <div class="placeholder-face">
+            <span></span><span></span>
+          </div>
+          <div class="placeholder-label">GIF 未找到</div>
+        </div>
+        <div class="hover-tip">拖动移动 · 点击聊天</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="pet.js"></script>
+</body>
+</html>
